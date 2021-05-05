@@ -113,8 +113,10 @@ int main(int argc,char** argv)
       return 1;
     }
   }
-    std::printf("roof reflection value:%f \n",roof);
-    std::printf("sides reflection value:%f \n",side);
+  //  std::printf("roof reflection value:%f \n",roof);
+   // std::printf("sides reflection value:%f \n",side);
+    Logger::instance()->print(("roof reflection value:"+std::to_string(roof)).c_str());
+    Logger::instance()->print(("roof reflection value:"+std::to_string(side)).c_str());
   // Instantiate G4UIExecutive if interactive mode
   G4UIExecutive* ui = nullptr;
   if ( macro.size() == 0 ) {
