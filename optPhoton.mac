@@ -1,0 +1,8 @@
+/control/verbose 0
+/tracking/verbose 0
+#
+/run/initialize
+#
+/vis/disable
+/run/beamOn 10000
+
