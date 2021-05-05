@@ -80,6 +80,7 @@ int main(int argc,char** argv)
 
     std::cout << "double:\t\t" << sizeof(double) << " bytes" << std::endl;
     std::cout << "int:\t\t" << sizeof(int) << " bytes" << std::endl;
+    std::cout << "argc " << argc << " value" << std::endl;
   // Evaluate arguments
   //
   if ( argc > 20 ) {  //9
@@ -94,7 +95,6 @@ int main(int argc,char** argv)
     G4double z=50+1+3.5/mm;
     G4double side=0.95;
     G4double roof=0.95;
-    std::printf("%f",roof);
 
 
   G4long myseed = 345354;
@@ -105,14 +105,16 @@ int main(int argc,char** argv)
      else if ( G4String(argv[i]) == "-x" ) x  = (float)atoi(argv[i+1]);
      else if ( G4String(argv[i]) == "-y" ) y  = (float)atoi(argv[i+1]);
      else if ( G4String(argv[i]) == "-z" ) z  = (float)atoi(argv[i+1]);
-     else if ( G4String(argv[i]) == "-side" ) side  = (float)atoi(argv[i+1]);
-     else if ( G4String(argv[i]) == "-roof" ) roof  = (float)atoi(argv[i+1]);
+     else if ( G4String(argv[i]) == "-side" ) side  = (float)atoi(argv[i+1])/100;
+     else if ( G4String(argv[i]) == "-roof" ) roof  = (float)atoi(argv[i+1])/100;
+
     else {
       PrintUsage();
       return 1;
     }
   }
-
+    std::printf("roof reflection value:%f \n",roof);
+    std::printf("sides reflection value:%f \n",side);
   // Instantiate G4UIExecutive if interactive mode
   G4UIExecutive* ui = nullptr;
   if ( macro.size() == 0 ) {
