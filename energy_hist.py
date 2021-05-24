@@ -1,27 +1,44 @@
 import matplotlib.pyplot as plt
 import numpy as np
+<<<<<<< HEAD
 from scipy.optimize import curve_fit
 toDouble=np.float64
 dtype=np.dtype([("event","i8"),("x",toDouble),("y",toDouble),("energy1",toDouble),("energy2",toDouble),("energy3",toDouble),("energy4",toDouble)])
 datalist=[]
 PATH='Variant2/'
 OUT_PATH=PATH+'out/'
+=======
+toDouble=np.float64
+dtype=np.dtype([("event","i8"),("x",toDouble),("y",toDouble),("energy1",toDouble),("energy2",toDouble),("energy3",toDouble),("energy4",toDouble)])
+datalist=[]
+
+
+>>>>>>> 0c5e91509968fa6b228c6eb59b3265c7c069f3ca
 
 
 
 
 for i in range(28):
+<<<<<<< HEAD
   tempdata=np.fromfile(PATH+"GammaCamera"+str(i)+".bin",dtype=dtype)
+=======
+  tempdata=np.fromfile("GammaCamera"+str(i)+".bin",dtype=dtype)
+>>>>>>> 0c5e91509968fa6b228c6eb59b3265c7c069f3ca
   plt.hist(tempdata['energy1']+tempdata['energy2']+tempdata['energy3']+tempdata['energy4'],bins=50)
   plt.title('x='+str(tempdata['x'][0])+" y="+str(tempdata['x'][1]))
   plt.xlabel('energy, MeV')
   plt.ylabel('counts')
+<<<<<<< HEAD
   plt.savefig(OUT_PATH+'hist'+str(i))
+=======
+  plt.savefig('hist'+str(i))
+>>>>>>> 0c5e91509968fa6b228c6eb59b3265c7c069f3ca
   plt.clf()
   datalist.append(tempdata)
 
 data=np.concatenate(datalist)
 
+<<<<<<< HEAD
 
 
 
@@ -51,6 +68,8 @@ plt.clf()
 
 data=data[(data['energy1']+data['energy2']+data['energy3']+data['energy4']< popt[2]+popt[1])*(data['energy1']+data['energy2']+data['energy3']+data['energy4']> popt[1]-popt[2])]
 
+=======
+>>>>>>> 0c5e91509968fa6b228c6eb59b3265c7c069f3ca
 result=np.full((7,7,4),np.nan)
 counts=np.zeros((7,7))
 
@@ -70,6 +89,12 @@ for i in range(7):
     result[i,j,:]=result[i,j,:]/counts[i,j]
     
     
+<<<<<<< HEAD
+=======
+
+    
+
+>>>>>>> 0c5e91509968fa6b228c6eb59b3265c7c069f3ca
 matrix=np.full((13,13,4),np.nan)
 matrix[6:13,6:13,:]=result
 
@@ -80,14 +105,22 @@ for i in range(6,13):
      matrix[j,i,:]=np.asarray([matrix[i,j,0],matrix[i,j,3],matrix[i,j,2],matrix[i,j,1]])
 for i in range(4):       
    plt.matshow(matrix[:,:,i].T,origin='lower')
+<<<<<<< HEAD
    plt.savefig(OUT_PATH+'vis'+str(i))
+=======
+   plt.savefig('vis'+str(i))
+>>>>>>> 0c5e91509968fa6b228c6eb59b3265c7c069f3ca
    plt.clf()   
      
 
    
 
 
+<<<<<<< HEAD
 for i in range(6,13):
+=======
+for i in range(6,13):#not ready
+>>>>>>> 0c5e91509968fa6b228c6eb59b3265c7c069f3ca
   for j in range(6,13):
      matrix[12-i,12-j,:]=np.asarray([matrix[i,j,2],matrix[i,j,3],matrix[i,j,0],matrix[i,j,1]])
      
@@ -97,6 +130,7 @@ for i in range(7,13):
      matrix[i,12-j,:]=np.asarray([matrix[i,j,3],matrix[i,j,2],matrix[i,j,1],matrix[i,j,0]])
 
   
+<<<<<<< HEAD
 np.save(PATH+'matrix',matrix)
 
 matrix=np.load(PATH+'matrix.npy')    
@@ -141,4 +175,15 @@ for i in range(0,7):
     plt.savefig(OUT_PATH+'2dhist/2dhist'+str(i)+str(j))
     plt.clf()
     
+=======
+    
+
+for i in range(4):       
+   plt.matshow(matrix[:,:,i].T,origin='lower')
+   plt.savefig('visMat'+str(i))
+   plt.clf()
+    
+  
+
+>>>>>>> 0c5e91509968fa6b228c6eb59b3265c7c069f3ca
 
