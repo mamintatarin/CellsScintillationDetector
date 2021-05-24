@@ -56,7 +56,7 @@ OpNovicePrimaryGeneratorAction::OpNovicePrimaryGeneratorAction(CLHEP::Hep3Vector
 
 
 
-/*
+
 
 
     G4ParticleDefinition* particle = particleTable->FindParticle("gamma");
@@ -65,8 +65,8 @@ OpNovicePrimaryGeneratorAction::OpNovicePrimaryGeneratorAction(CLHEP::Hep3Vector
      fParticleGun->SetParticlePosition(position);
      fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,-1.));
      fParticleGun->SetParticleEnergy(140.0*keV);
+/*
 
-*/
     G4ParticleDefinition* particle = particleTable->FindParticle("opticalphoton");
     fParticleGun->SetParticleDefinition(particle);
     fParticleGun->SetParticleTime(0.0*ns);
@@ -74,7 +74,7 @@ OpNovicePrimaryGeneratorAction::OpNovicePrimaryGeneratorAction(CLHEP::Hep3Vector
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.4,0.0,-0.8));
     fParticleGun->SetParticleEnergy(2.5*eV);
     fParticleGun->SetParticlePolarization(G4ThreeVector(1.0,1.0,0.0));
-
+*/
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
