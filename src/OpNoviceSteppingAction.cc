@@ -37,20 +37,15 @@
 #include <stdio.h>
 #include <Logger.hh>
 #include"G4Gamma.hh"
-#include <chrono>
 
-double EFFICIENCY=0.3;
+
+//double EFFICIENCY=0.3;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 OpNoviceSteppingAction::OpNoviceSteppingAction()
 : G4UserSteppingAction()
 {
 
-
- srand(static_cast<unsigned int>(time(0)));
-
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    simple_rand.seed(seed);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -69,10 +64,9 @@ void OpNoviceSteppingAction::UserSteppingAction(const G4Step* step)
         &&
         track->GetVolume()->GetName()!="Scintillator" ){
 
-        double chance=double(simple_rand())/ simple_rand.max();
-        if (chance<EFFICIENCY) {
+
             results[0] += track->GetKineticEnergy()/MeV;
-        }
+
         track->SetTrackStatus(fStopAndKill);
 
     }
@@ -80,45 +74,36 @@ void OpNoviceSteppingAction::UserSteppingAction(const G4Step* step)
                                                       &&
                                                       track->GetVolume()->GetName()!="Scintillator" ){
 
-        double chance=double(simple_rand())/ simple_rand.max();
-        if (chance<EFFICIENCY) {
+
             results[1] += track->GetKineticEnergy()/MeV;
-        }
+
         track->SetTrackStatus(fStopAndKill);
     }
     if ((track->GetVolume()->GetName()=="Detector3" && track->GetDefinition()== G4OpticalPhoton::Definition())&&
         track->GetVolume()->GetName()!="Scintillator" )
     {
 
-        double chance=double(simple_rand())/ simple_rand.max();
-        if (chance<EFFICIENCY) {
+
             results[2] += track->GetKineticEnergy()/MeV;
-        }
+
         track->SetTrackStatus(fStopAndKill);
     }
     if ((track->GetVolume()->GetName()=="Detector4" && track->GetDefinition()== G4OpticalPhoton::Definition())
         &&
         track->GetVolume()->GetName()!="Scintillator" )
     {
-       // double chance=(double)(rand())/RAND_MAX;
-        double chance=double(simple_rand())/ simple_rand.max();
-        //std::printf((std::to_string(chance)+"\n").c_str());
-        if (chance<EFFICIENCY) {
+
 
             results[3] += track->GetKineticEnergy()/MeV;
-            G4int event = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-
-        }
-        track->SetTrackStatus(fStopAndKill);
-    }
-    if (track->GetVolume()->GetName()=="World"  and track->GetDefinition()==G4OpticalPhoton::Definition()){
 
         track->SetTrackStatus(fStopAndKill);
     }
+ //   if (track->GetVolume()->GetName()=="World"  and track->GetVolume()->GetName()!="Scintillator"  and track->GetDefinition()==G4OpticalPhoton::Definition()){
 
-     //if (track->GetDefinition()==G4Gamma::Definition()) {
+   //     track->SetTrackStatus(fStopAndKill);
+  //  }
 
-     //}
+
 
 
     }

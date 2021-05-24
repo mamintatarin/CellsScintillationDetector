@@ -138,11 +138,16 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
   G4double world_sizeXY = 30*cm;
   G4double world_sizeZ  = 30*cm;
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
+    G4Material* det_mat = nist->FindOrBuildMaterial("G4_AIR");
   //G4Material* muscle_mat = nist->FindOrBuildMaterial("G4_MUSCLE_SKELETAL_ICRP");
   G4MaterialPropertiesTable* GalacticSC = new G4MaterialPropertiesTable();
+  G4MaterialPropertiesTable* detTable = new G4MaterialPropertiesTable();
   G4double refr[]={1,1};
+    G4double refrDet[]={2,2};
   GalacticSC->AddProperty("RINDEX",ph_Energy,refr,2);
+  detTable->AddProperty("RINDEX",ph_Energy,refrDet,2);
   world_mat ->SetMaterialPropertiesTable(GalacticSC);
+  det_mat->SetMaterialPropertiesTable(detTable);
 
 
 
@@ -303,7 +308,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
                       0.3*cm, 0.3*cm, scintillator_sizeZ);     //its size
     G4LogicalVolume* logicDetector1 =
             new G4LogicalVolume(solidDetector,          //its solid
-                                world_mat,           //its material
+                                det_mat,           //its material
                                 "Detector1");            //its name
 
     G4VPhysicalVolume* Detector1 =
@@ -317,7 +322,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
                               checkOverlaps);        //overlaps checking
     G4LogicalVolume* logicDetector2 =
             new G4LogicalVolume(solidDetector,          //its solid
-                                world_mat,           //its material
+                                det_mat,           //its material
                                 "Detector2");            //its name
 
     G4VPhysicalVolume* Detector2 =
@@ -332,7 +337,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
 
     G4LogicalVolume* logicDetector3 =
             new G4LogicalVolume(solidDetector,          //its solid
-                                world_mat,           //its material
+                                det_mat,           //its material
                                 "Detector3");            //its name
 
     G4VPhysicalVolume* Detector3 =
@@ -347,7 +352,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
 
     G4LogicalVolume* logicDetector4 =
             new G4LogicalVolume(solidDetector,          //its solid
-                                world_mat,           //its material
+                                det_mat,           //its material
                                 "Detector4");            //its name
 
     G4VPhysicalVolume* Detector4 =
@@ -382,10 +387,11 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     G4LogicalBorderSurface* Surface5 = new
             G4LogicalBorderSurface("side5",Scintillator,Degree5,OpSurface5);
 
-   // G4OpticalSurfaceFinish finish=polishedfrontpainted;
+
     G4OpticalSurfaceFinish finish=polishedtyvekair;
     G4OpticalSurfaceModel model=LUT;
     G4SurfaceType type=dielectric_LUT;
+
     Logger::instance()->print(("type:"+std::to_string(type)).c_str());
     Logger::instance()->print(("model:"+std::to_string(model)).c_str());
     Logger::instance()->print(("finish:"+std::to_string(finish)).c_str());
@@ -403,35 +409,25 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     OpSurface4->SetType(type);
     OpSurface5->SetFinish(finish);
     OpSurface5->SetModel(model);
+    OpSurface5->SetType(type);
 
 
 
 
     G4double reflectivitySideOp[]={this->side,this->side};
     G4double reflectivityRoofOp[]={this->roof,this->roof};
-    //G4double efficiencyOp[]={1.0,1.0};
-   // G4double transmissionOp[]={0.0,0.0};
+
 
     G4MaterialPropertiesTable* OpSurfaceProperty1 = new G4MaterialPropertiesTable();
     OpSurfaceProperty1->AddProperty("REFLECTIVITY",ph_Energy,reflectivitySideOp,n);
-  //  OpSurfaceProperty1->AddProperty("EFFICIENCY",ph_Energy,efficiencyOp,n);
-  //  OpSurfaceProperty1->AddProperty("TRANSMITTANCE",ph_Energy,transmissionOp,n);
     G4MaterialPropertiesTable* OpSurfaceProperty2 = new G4MaterialPropertiesTable();
     OpSurfaceProperty2->AddProperty("REFLECTIVITY",ph_Energy,reflectivitySideOp,n);
-  //  OpSurfaceProperty2->AddProperty("EFFICIENCY",ph_Energy,efficiencyOp,n);
-   // OpSurfaceProperty2->AddProperty("TRANSMITTANCE",ph_Energy,transmissionOp,n);
     G4MaterialPropertiesTable* OpSurfaceProperty3 = new G4MaterialPropertiesTable();
     OpSurfaceProperty3->AddProperty("REFLECTIVITY",ph_Energy,reflectivitySideOp,n);
-  //  OpSurfaceProperty3->AddProperty("EFFICIENCY",ph_Energy,efficiencyOp,n);
-   // OpSurfaceProperty3->AddProperty("TRANSMITTANCE",ph_Energy,transmissionOp,n);
     G4MaterialPropertiesTable* OpSurfaceProperty4 = new G4MaterialPropertiesTable();
     OpSurfaceProperty4->AddProperty("REFLECTIVITY",ph_Energy,reflectivitySideOp,n);
-  //  OpSurfaceProperty4->AddProperty("EFFICIENCY",ph_Energy,efficiencyOp,n);
-  //  OpSurfaceProperty4->AddProperty("TRANSMITTANCE",ph_Energy,transmissionOp,n);
     G4MaterialPropertiesTable* OpSurfaceProperty5 = new G4MaterialPropertiesTable();
     OpSurfaceProperty5->AddProperty("REFLECTIVITY",ph_Energy,reflectivityRoofOp,n);
-   // OpSurfaceProperty5->AddProperty("EFFICIENCY",ph_Energy,efficiencyOp,n);
-  //  OpSurfaceProperty5->AddProperty("TRANSMITTANCE",ph_Energy,transmissionOp,n);
 
     OpSurface1->SetMaterialPropertiesTable(OpSurfaceProperty1);
     OpSurface2->SetMaterialPropertiesTable(OpSurfaceProperty2);
@@ -440,9 +436,59 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     OpSurface5->SetMaterialPropertiesTable(OpSurfaceProperty5);
 
 
+    G4OpticalSurface* OpSurface6 = new G4OpticalSurface("detector1");
+    G4LogicalBorderSurface* Surface6 = new
+            G4LogicalBorderSurface("detector1",Scintillator,Detector1,OpSurface6);
+    G4OpticalSurface* OpSurface7 = new G4OpticalSurface("detector2");
+    G4LogicalBorderSurface* Surface7 = new
+            G4LogicalBorderSurface("detector2",Scintillator,Detector2,OpSurface7);
+    G4OpticalSurface* OpSurface8 = new G4OpticalSurface("detector3");
+    G4LogicalBorderSurface* Surface8 = new
+            G4LogicalBorderSurface("detector3",Scintillator,Detector3,OpSurface8);
+    G4OpticalSurface* OpSurface9 = new G4OpticalSurface("detector4");
+    G4LogicalBorderSurface* Surface9= new
+            G4LogicalBorderSurface("detector4",Scintillator,Detector4,OpSurface9);
+    G4OpticalSurface* OpSurface10 = new G4OpticalSurface("lines");
+    G4LogicalBorderSurface* Surface10= new
+            G4LogicalBorderSurface("lines",Scintillator,physWorld,OpSurface10);
+    G4OpticalSurfaceFinish finishDet=polished;
+    G4OpticalSurfaceModel modelDet=unified;
+    G4SurfaceType typeDet=dielectric_dielectric;
+    OpSurface6->SetType(typeDet);
+    OpSurface6->SetFinish(finishDet);
+    OpSurface6->SetModel(modelDet);
+    OpSurface7->SetFinish(finishDet);
+    OpSurface7->SetModel(modelDet);
+    OpSurface7->SetType(typeDet);
+    OpSurface8->SetFinish(finishDet);
+    OpSurface8->SetModel(modelDet);
+    OpSurface8->SetType(typeDet);
+    OpSurface9->SetFinish(finishDet);
+    OpSurface9->SetModel(modelDet);
+    OpSurface9->SetType(typeDet);
+    OpSurface10->SetFinish(finish);
+    OpSurface10->SetModel(model);
+    OpSurface10->SetType(type);
 
+    G4double reflectivityDet[]={0.3,0.3};
+    G4double reflectivityLines[]={0.5,0.5};
 
+    G4MaterialPropertiesTable* OpSurfaceProperty6 = new G4MaterialPropertiesTable();
+    OpSurfaceProperty6->AddProperty("REFLECTIVITY",ph_Energy,reflectivityDet,n);
+    G4MaterialPropertiesTable* OpSurfaceProperty7 = new G4MaterialPropertiesTable();
+    OpSurfaceProperty7->AddProperty("REFLECTIVITY",ph_Energy,reflectivityDet,n);
+    G4MaterialPropertiesTable* OpSurfaceProperty8 = new G4MaterialPropertiesTable();
+    OpSurfaceProperty8->AddProperty("REFLECTIVITY",ph_Energy,reflectivityDet,n);
+    G4MaterialPropertiesTable* OpSurfaceProperty9 = new G4MaterialPropertiesTable();
+    OpSurfaceProperty9->AddProperty("REFLECTIVITY",ph_Energy,reflectivityDet,n);
+    G4MaterialPropertiesTable* OpSurfaceProperty10 = new G4MaterialPropertiesTable();
+    OpSurfaceProperty10->AddProperty("REFLECTIVITY",ph_Energy,reflectivityLines,n);
 
+    OpSurface6->SetMaterialPropertiesTable(OpSurfaceProperty6);
+    OpSurface7->SetMaterialPropertiesTable(OpSurfaceProperty7);
+    OpSurface8->SetMaterialPropertiesTable(OpSurfaceProperty8);
+    OpSurface9->SetMaterialPropertiesTable(OpSurfaceProperty9);
+    OpSurface10->SetMaterialPropertiesTable(OpSurfaceProperty10);
 
 
 
