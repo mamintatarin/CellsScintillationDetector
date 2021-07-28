@@ -39,72 +39,77 @@
 #include"G4Gamma.hh"
 
 
-//double EFFICIENCY=0.3;
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-OpNoviceSteppingAction::OpNoviceSteppingAction()
-: G4UserSteppingAction()
-{
 
-}
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+OpNoviceSteppingAction::OpNoviceSteppingAction(): G4UserSteppingAction(){}
+
+
 
 OpNoviceSteppingAction::~OpNoviceSteppingAction(){}
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
 
 void OpNoviceSteppingAction::UserSteppingAction(const G4Step* step)
 {
   auto track = step->GetTrack();
+    if (track->GetVolume()->GetName()=="World"  and track->GetVolume()->GetName()!="Scintillator" and track->GetDefinition()==G4OpticalPhoton::Definition()){
+
+        track->SetTrackStatus(fStopAndKill);
+    }
 
 
+    if (track->GetVolume()->GetName()=="Detector1" && track->GetDefinition()== G4OpticalPhoton::Definition()
+    &&track->GetVolume()->GetName()!="Scintillator")
+    {
 
-    if ((track->GetVolume()->GetName()=="Detector1" && track->GetDefinition()== G4OpticalPhoton::Definition())
-        &&
-        track->GetVolume()->GetName()!="Scintillator" ){
 
-
-            results[0] += track->GetKineticEnergy()/MeV;
+            results[0] += track->GetKineticEnergy()/keV;
 
         track->SetTrackStatus(fStopAndKill);
 
     }
-    if ((track->GetVolume()->GetName()=="Detector2" && track->GetDefinition()== G4OpticalPhoton::Definition())
+    if (track->GetVolume()->GetName()=="Detector2" && track->GetDefinition()== G4OpticalPhoton::Definition()
                                                       &&
                                                       track->GetVolume()->GetName()!="Scintillator" ){
 
 
-            results[1] += track->GetKineticEnergy()/MeV;
+            results[1] += track->GetKineticEnergy()/keV;
 
         track->SetTrackStatus(fStopAndKill);
     }
-    if ((track->GetVolume()->GetName()=="Detector3" && track->GetDefinition()== G4OpticalPhoton::Definition())&&
-        track->GetVolume()->GetName()!="Scintillator" )
+    if (track->GetVolume()->GetName()=="Detector3" && track->GetDefinition()== G4OpticalPhoton::Definition()
+        &&track->GetVolume()->GetName()!="Scintillator")
     {
 
 
-            results[2] += track->GetKineticEnergy()/MeV;
+            results[2] += track->GetKineticEnergy()/keV;
 
         track->SetTrackStatus(fStopAndKill);
     }
-    if ((track->GetVolume()->GetName()=="Detector4" && track->GetDefinition()== G4OpticalPhoton::Definition())
-        &&
-        track->GetVolume()->GetName()!="Scintillator" )
+    if (track->GetVolume()->GetName()=="Detector4" && track->GetDefinition()== G4OpticalPhoton::Definition()
+    &&track->GetVolume()->GetName()!="Scintillator")
     {
 
 
-            results[3] += track->GetKineticEnergy()/MeV;
+            results[3] += track->GetKineticEnergy()/keV;
 
         track->SetTrackStatus(fStopAndKill);
     }
- //   if (track->GetVolume()->GetName()=="World"  and track->GetVolume()->GetName()!="Scintillator"  and track->GetDefinition()==G4OpticalPhoton::Definition()){
-
-   //     track->SetTrackStatus(fStopAndKill);
-  //  }
 
 
 
+
+/*
+
+    if (track->GetVolume()->GetName()=="Scintillator" && track->GetDefinition()==G4OpticalPhoton::Definition())
+    {
+
+
+        results[0] += track->GetKineticEnergy()/keV;
+        track->SetTrackStatus(fStopAndKill);
+    }
+ */
 
     }
 

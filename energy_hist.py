@@ -4,7 +4,7 @@ from scipy.optimize import curve_fit
 toDouble=np.float64
 dtype=np.dtype([("event","i8"),("x",toDouble),("y",toDouble),("energy1",toDouble),("energy2",toDouble),("energy3",toDouble),("energy4",toDouble)])
 datalist=[]
-PATH='Variant2/'
+PATH='data/ideal/'
 OUT_PATH=PATH+'out/'
 
 
@@ -13,8 +13,8 @@ OUT_PATH=PATH+'out/'
 for i in range(28):
   tempdata=np.fromfile(PATH+"GammaCamera"+str(i)+".bin",dtype=dtype)
   plt.hist(tempdata['energy1']+tempdata['energy2']+tempdata['energy3']+tempdata['energy4'],bins=50)
-  plt.title('x='+str(tempdata['x'][0])+" y="+str(tempdata['x'][1]))
-  plt.xlabel('energy, MeV')
+  plt.title('x='+str(tempdata['x'][0])+" y="+str(tempdata['y'][0]))
+  plt.xlabel('energy, keV')
   plt.ylabel('counts')
   plt.savefig(OUT_PATH+'hist'+str(i))
   plt.clf()
@@ -34,33 +34,35 @@ def gauss(x,a,x0,sigma):
 
 a_predict=2500
 x0_predict=edges[np.argmax(hist)]
-#sigma_predict=0.0002
-sigma_predict=0.00008
+sigma_predict=0.5
 
 left=int(np.argmax(hist)*0.8)
 right=int(np.argmax(hist)*1.4)
-popt,pcov = curve_fit(gauss,edges[left:right],hist[left:right],p0=[a_predict,x0_predict,sigma_predict])
+popt,pcov = curve_fit(gauss,edges[left:right-1],hist[left:right],p0=[a_predict,x0_predict,sigma_predict])
 plt.plot(edges[:-1],hist,color='b',label='simulation data')
 plt.plot(edges[left:right],gauss(edges[left:right],popt[0],popt[1],popt[2]),color='red',label='fit')
 plt.title("Sigma/x0 = "+str(popt[2]/popt[1])+", FWHM = "+str(2.355*popt[2]/popt[1]))
 plt.ylabel('probabillity')
 plt.legend(loc='best')
-plt.xlabel('energy, MeV')
+plt.xlabel('energy, keV')
 plt.savefig(OUT_PATH+'EnergyFit')
 plt.clf()
 
 data=data[(data['energy1']+data['energy2']+data['energy3']+data['energy4']< popt[2]+popt[1])*(data['energy1']+data['energy2']+data['energy3']+data['energy4']> popt[1]-popt[2])]
 
-result=np.full((7,7,4),np.nan)
-counts=np.zeros((7,7))
+result=np.full((7,7,4),np.nan) #квадратики 1 мм
+
+counts=np.zeros((7,7)) # число событий в каждом квадратике
 
 for line in data:
-   if(counts[int(line['x']),int(line['y'])]==0):
+  if(counts[int(line['x']),int(line['y'])]==0):
       result[int(line['x']),int(line['y']),:]=np.asarray([line['energy1'],line['energy2'],line['energy3'],line['energy4']])
       counts[int(line['x']),int(line['y'])]=1
-   else:   
+  
+  else:   
       result[int(line['x']),int(line['y']),:]=result[int(line['x']),int(line['y']),:]+np.asarray([line['energy1'],line['energy2'],line['energy3'],line['energy4']])
       counts[int(line['x']),int(line['y'])]=counts[int(line['x']),int(line['y'])]+1
+
 
 
 
@@ -101,10 +103,51 @@ np.save(PATH+'matrix',matrix)
 
 matrix=np.load(PATH+'matrix.npy')    
 
+matrix2 = np.zeros((7,7,4))
+counts2 = np.zeros((7,7))
+
+matrix3 = np.zeros((5,5,4))
+counts3 = np.zeros((5,5))
+
+for i in range(7):
+  for j in range(7):
+    x2 = (i-3)*2
+    y2 = (j-3)*2
+    for k in range(13):
+      for l in range(13):
+        x = k-6
+        y = l-6
+        if abs(x-x2)==0 and abs(y-y2)==0:
+          matrix2[i,j,:] = matrix2[i,j,:] + matrix[k,l,:]
+          counts2[i,j] = counts2[i,j] + 1
+for i in range(7):
+  for j in range(7):
+    matrix2[i,j,:]=matrix2[i,j,:]/counts2[i,j]
+
+for i in range(5):
+  for j in range(5):
+    x3 = (i-2)*3
+    y3 = (j-2)*3
+    for k in range(13):
+      for l in range(13):
+        x = k-6
+        y = l-6
+        if abs(x-x3)==0 and abs(y-y3)==0:
+          matrix3[i,j,:] = matrix3[i,j,:] + matrix[k,l,:]
+          counts3[i,j] = counts3[i,j] + 1
+for i in range(5):
+  for j in range(5):
+    matrix3[i,j,:]=matrix3[i,j,:]/counts3[i,j]
 
 for i in range(4):       
    plt.matshow(matrix[:,:,i].T,origin='lower')
    plt.savefig(OUT_PATH+'visMat'+str(i))
+   plt.clf()
+   plt.matshow(matrix2[:,:,i].T,origin='lower')
+   plt.savefig(OUT_PATH+'visMat_2_'+str(i))
+   plt.clf()
+   plt.matshow(matrix3[:,:,i].T,origin='lower')
+   plt.savefig(OUT_PATH+'visMat_3_'+str(i))
    plt.clf()
 
 
@@ -114,31 +157,55 @@ def predict(e1,e2,e3,e4,matrix):
    centered[:,:,1]=centered[:,:,1]-e2
    centered[:,:,2]=centered[:,:,2]-e3
    centered[:,:,3]=centered[:,:,3]-e4
-   return np.unravel_index(np.argmin(centered[:,:,0]**2+centered[:,:,1]**2+centered[:,:,2]**2+centered[:,:,3]**2),(13,13))
+   return np.unravel_index( np.argmin( abs(centered[:,:,0])+abs(centered[:,:,1])+abs(centered[:,:,2])+abs(centered[:,:,3]) ) , [matrix.shape[0],matrix.shape[0]] )
         
 
 
 
 
-print(popt[1]-popt[2],popt[2]+popt[1])
 for i in range(0,7):
   for j in range(i+1):    
-    dataSlice=data[(data['x'].astype(np.int)==i)*(data['y'].astype(np.int)==j)]
+    dataSlice=data[(data['x'].astype(int)==i)*(data['y'].astype(int)==j)]
     prediction=[]
+    prediction2=[]
+    prediction3=[]
     for line in dataSlice:
       e1=line['energy1']
       e2=line['energy2']
       e3=line['energy3']
       e4=line['energy4']
       coords=predict(e1,e2,e3,e4,matrix)
-      prediction.append([int(coords[0]),int(coords[1])])
+      coords2=predict(e1,e2,e3,e4,matrix2)
+      coords3=predict(e1,e2,e3,e4,matrix3)
+      prediction.append([int(coords[0])-6,int(coords[1])-6])
+      prediction2.append([  (int(coords2[0])-3)*2    ,(int(coords2[1])-3)*2 ])
+      prediction3.append([ (int(coords3[0])-2)*3  ,  (int(coords3[1])-2)*3 ])
     prediction=np.asarray(prediction)  
-    plt.hist2d(prediction[:,0],prediction[:,1])
-    plt.title('x='+str(i+6)+' y='+str(j+6))
+    prediction2=np.asarray(prediction2)  
+    prediction3=np.asarray(prediction3)
+    plt.hist2d(prediction[:,0],prediction[:,1],bins=[np.arange(-6.5,7.5), np.arange(-6.5,7.5)])
+    plt.scatter(i,j,color='red')
+    plt.title('Probabiillity for each coorinate vs true coordinate')
     plt.xlabel('x,mm')
     plt.ylabel('y,mm')
     plt.colorbar()
     plt.savefig(OUT_PATH+'2dhist/2dhist'+str(i)+str(j))
     plt.clf()
-    
+    plt.hist2d(prediction2[:,0],prediction2[:,1],bins=[np.arange(-6.5,7.5), np.arange(-6.5,7.5)])
+    plt.title('Probabiillity for each coorinate vs true coordinate')
+    plt.scatter(i,j,color='red')
+    plt.xlabel('x,mm')
+    plt.ylabel('y,mm')
+    plt.colorbar()
+    plt.savefig(OUT_PATH+'2dhist/2dhist_2_'+str(i)+str(j))
+    plt.clf()
+    plt.hist2d(prediction3[:,0],prediction3[:,1],bins=[np.arange(-6.5,7.5), np.arange(-6.5,7.5)])
+    plt.title('Probabiillity for each coorinate vs true coordinate')
+    plt.scatter(i,j,color='red')
+    plt.xlabel('x,mm')
+    plt.ylabel('y,mm')
+    plt.colorbar()
+    plt.savefig(OUT_PATH+'2dhist/2dhist_3_'+str(i)+str(j))
+    plt.clf()
+
 

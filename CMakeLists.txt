@@ -9,7 +9,8 @@ project(OpNovice)
 # to build a batch mode only executable
 #
 
-#set(Geant4_DIR /mnt/c/users/Professional/Desktop/job/GEANT4/install/lib/Geant4-10.6.2/)
+set(Geant4_DIR home/timur/GEANT4/install/lib/Geant4-10.7.2/)
+
 option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
 if(WITH_GEANT4_UIVIS)
   find_package(Geant4 REQUIRED ui_all vis_all)

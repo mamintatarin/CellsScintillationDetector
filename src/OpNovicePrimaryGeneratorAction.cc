@@ -71,10 +71,10 @@ OpNovicePrimaryGeneratorAction::OpNovicePrimaryGeneratorAction(CLHEP::Hep3Vector
     fParticleGun->SetParticleDefinition(particle);
     fParticleGun->SetParticleTime(0.0*ns);
     fParticleGun->SetParticlePosition(G4ThreeVector(0.0,0.0,0.0));
-    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.4,0.0,-0.8));
+    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(-0.3,-0.3,-0.5));
     fParticleGun->SetParticleEnergy(2.5*eV);
     fParticleGun->SetParticlePolarization(G4ThreeVector(1.0,1.0,0.0));
-*/
+    */
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

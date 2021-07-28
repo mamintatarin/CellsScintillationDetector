@@ -70,12 +70,12 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
 
   G4bool isotopes = true;
   
-  G4Element*  La = nist->FindOrBuildElement("La" , isotopes);
-  G4Element* Br = nist->FindOrBuildElement("Br", isotopes);
+  //G4Element*  La = nist->FindOrBuildElement("La" , isotopes);
+  //G4Element* Br = nist->FindOrBuildElement("Br", isotopes);
   
-  G4Material* LaBr3 = new G4Material("LaBr3", 5.06*g/cm3, 2);
-  LaBr3->AddElement(La, 1);
-  LaBr3->AddElement(Br, 3);
+  //G4Material* LaBr3 = new G4Material("LaBr3", 5.06*g/cm3, 2);
+  //LaBr3->AddElement(La, 1);
+  //LaBr3->AddElement(Br, 3);
 
     G4Material* GAGG = new G4Material("GAGG", 6.63*g/cm3, 4);
     G4Element*  Al = nist->FindOrBuildElement("Al" , isotopes);
@@ -97,7 +97,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     G4int n = 2;
     G4double ph_Energy[]    = { 1.0*eV , 7.07*eV};
     G4double LaBr3RefractiveIndex[]= {1.90,1.90};
-    G4double LaBr3Absorlen[]= {50*cm,50*cm};
+    G4double LaBr3Absorlen[]= {100*cm,100*cm};
 
     
   //  G4MaterialPropertiesTable* LaBr3SC = new G4MaterialPropertiesTable();
@@ -115,17 +115,19 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     LaBr3SC->AddConstProperty("FASTTIMECONSTANT", 0.016*ns);//ШТО?
     LaBr3SC->AddConstProperty("YIELDRATIO",1.0);
 */
-    G4double distrEn[]={2.2*eV,2.38*eV,2.75*eV};
-    G4double distrF[]={0.05,0.7,0.25};
+   G4double distrEn[]={2.6*eV,2.38*eV,2.07*eV,1.77*eV};
+   G4double distrF[]={0.1,1,0.33,0.08};
+
     GAGGSC->AddConstProperty("SCINTILLATIONYIELD",40./keV);
     GAGGSC->AddProperty("RINDEX", ph_Energy,LaBr3RefractiveIndex,n);
     GAGGSC->AddProperty("ABSLENGTH",ph_Energy, LaBr3Absorlen,n);
     GAGGSC->AddConstProperty("RESOLUTIONSCALE",1.9);
-    GAGGSC->AddConstProperty("FASTTIMECONSTANT", 50*ns);
-    GAGGSC->AddConstProperty("YIELDRATIO",0.9);
-    GAGGSC->AddConstProperty("FASTTIMECONSTANT", 150*ns);
-    GAGGSC->AddConstProperty("REFLECTIVITY",0.05);
-    GAGGSC->AddProperty("FASTCOMPONENT",distrEn,distrF,3);
+    GAGGSC->AddConstProperty("YIELDRATIO",0.95);
+    GAGGSC->AddConstProperty("FASTTIMECONSTANT", 5*ns);
+    GAGGSC->AddConstProperty("SLOWTIMECONSTANT", 60*ns);
+    //GAGGSC->AddConstProperty("REFLECTIVITY",0.05);
+    GAGGSC->AddProperty("FASTCOMPONENT",distrEn,distrF,4)->SetSpline(TRUE);
+    GAGGSC->AddProperty("SLOWCOMPONENT",distrEn,distrF,4)->SetSpline(TRUE);
     
   //  LaBr3->SetMaterialPropertiesTable(LaBr3SC);
     GAGG->SetMaterialPropertiesTable(GAGGSC);
@@ -143,7 +145,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
   G4MaterialPropertiesTable* GalacticSC = new G4MaterialPropertiesTable();
   G4MaterialPropertiesTable* detTable = new G4MaterialPropertiesTable();
   G4double refr[]={1,1};
-    G4double refrDet[]={2,2};
+  G4double refrDet[]={2,2};
   GalacticSC->AddProperty("RINDEX",ph_Energy,refr,2);
   detTable->AddProperty("RINDEX",ph_Energy,refrDet,2);
   world_mat ->SetMaterialPropertiesTable(GalacticSC);
@@ -233,7 +235,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
 
     G4VPhysicalVolume* Degree1 =
             new G4PVPlacement(0,                     //no rotation
-                              G4ThreeVector(1.4*cm,0.0*cm,0.0*cm),       //at (0,0,0)
+                              G4ThreeVector(1.4*cm,0.0*cm,0.0*cm),
                               logicDegree1,            //its logical volume
                               "Degree1",               //its name
                               logicWorld,                     //its mother  volume
@@ -248,7 +250,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
 
     G4VPhysicalVolume* Degree2 =
             new G4PVPlacement(0,                     //no rotation
-                              G4ThreeVector(-1.4*cm,0.0*cm,0.0*cm),       //at (0,0,0)
+                              G4ThreeVector(-1.4*cm,0.0*cm,0.0*cm),
                               logicDegree2,            //its logical volume
                               "Degree2",               //its name
                               logicWorld,                     //its mother  volume
@@ -262,7 +264,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
 
     G4VPhysicalVolume* Degree3 =
             new G4PVPlacement(0,                     //no rotation
-                              G4ThreeVector(0*cm,1.4*cm,0.0*cm),       //at (0,0,0)
+                              G4ThreeVector(0*cm,1.4*cm,0.0*cm),
                               logicDegree3,            //its logical volume
                               "Degree3",               //its name
                               logicWorld,                     //its mother  volume
@@ -388,9 +390,9 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
             G4LogicalBorderSurface("side5",Scintillator,Degree5,OpSurface5);
 
 
-    G4OpticalSurfaceFinish finish=polishedtyvekair;
-    G4OpticalSurfaceModel model=LUT;
-    G4SurfaceType type=dielectric_LUT;
+    G4OpticalSurfaceFinish finish=polishedfrontpainted;
+    G4OpticalSurfaceModel model=unified;
+    G4SurfaceType type=dielectric_dielectric;
 
     Logger::instance()->print(("type:"+std::to_string(type)).c_str());
     Logger::instance()->print(("model:"+std::to_string(model)).c_str());
@@ -448,9 +450,9 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     G4OpticalSurface* OpSurface9 = new G4OpticalSurface("detector4");
     G4LogicalBorderSurface* Surface9= new
             G4LogicalBorderSurface("detector4",Scintillator,Detector4,OpSurface9);
-    G4OpticalSurface* OpSurface10 = new G4OpticalSurface("lines");
-    G4LogicalBorderSurface* Surface10= new
-            G4LogicalBorderSurface("lines",Scintillator,physWorld,OpSurface10);
+ //   G4OpticalSurface* OpSurface10 = new G4OpticalSurface("lines");
+  //  G4LogicalBorderSurface* Surface10= new
+        //    G4LogicalBorderSurface("lines",Scintillator,physWorld,OpSurface10);
     G4OpticalSurfaceFinish finishDet=polished;
     G4OpticalSurfaceModel modelDet=unified;
     G4SurfaceType typeDet=dielectric_dielectric;
@@ -466,12 +468,12 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     OpSurface9->SetFinish(finishDet);
     OpSurface9->SetModel(modelDet);
     OpSurface9->SetType(typeDet);
-    OpSurface10->SetFinish(finish);
-    OpSurface10->SetModel(model);
-    OpSurface10->SetType(type);
+   // OpSurface10->SetFinish(finish);
+  //  OpSurface10->SetModel(model);
+   // OpSurface10->SetType(type);
 
-    G4double reflectivityDet[]={0.3,0.3};
-    G4double reflectivityLines[]={0.5,0.5};
+    G4double reflectivityDet[]={0.98,0.98};
+   // G4double reflectivityLines[]={0,0};
 
     G4MaterialPropertiesTable* OpSurfaceProperty6 = new G4MaterialPropertiesTable();
     OpSurfaceProperty6->AddProperty("REFLECTIVITY",ph_Energy,reflectivityDet,n);
@@ -481,14 +483,14 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     OpSurfaceProperty8->AddProperty("REFLECTIVITY",ph_Energy,reflectivityDet,n);
     G4MaterialPropertiesTable* OpSurfaceProperty9 = new G4MaterialPropertiesTable();
     OpSurfaceProperty9->AddProperty("REFLECTIVITY",ph_Energy,reflectivityDet,n);
-    G4MaterialPropertiesTable* OpSurfaceProperty10 = new G4MaterialPropertiesTable();
-    OpSurfaceProperty10->AddProperty("REFLECTIVITY",ph_Energy,reflectivityLines,n);
+   G4MaterialPropertiesTable* OpSurfaceProperty10 = new G4MaterialPropertiesTable();
+ //  OpSurfaceProperty10->AddProperty("REFLECTIVITY",ph_Energy,reflectivityLines,n);
 
     OpSurface6->SetMaterialPropertiesTable(OpSurfaceProperty6);
     OpSurface7->SetMaterialPropertiesTable(OpSurfaceProperty7);
     OpSurface8->SetMaterialPropertiesTable(OpSurfaceProperty8);
     OpSurface9->SetMaterialPropertiesTable(OpSurfaceProperty9);
-    OpSurface10->SetMaterialPropertiesTable(OpSurfaceProperty10);
+  // OpSurface10->SetMaterialPropertiesTable(OpSurfaceProperty10);
 
 
 

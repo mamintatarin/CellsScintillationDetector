@@ -43,7 +43,7 @@
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#include "G4Types.hh"
+#include <G4Types.hh>
 #include "globals.hh"
 #include <CLHEP/Vector/ThreeVector.h>
 #include "G4RunManager.hh"
@@ -59,8 +59,7 @@
 #include <Logger.hh>
 #include "G4SystemOfUnits.hh"
 #include "iostream"
-#include <chrono>
-auto start = std::chrono::high_resolution_clock::now();
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 namespace {
@@ -113,8 +112,7 @@ int main(int argc,char** argv)
       return 1;
     }
   }
-  //  std::printf("roof reflection value:%f \n",roof);
-   // std::printf("sides reflection value:%f \n",side);
+
     Logger::instance()->print(("roof reflection value:"+std::to_string(roof)).c_str());
     Logger::instance()->print(("sides reflection value:"+std::to_string(side)).c_str());
   // Instantiate G4UIExecutive if interactive mode
@@ -187,9 +185,7 @@ int main(int argc,char** argv)
 
   delete visManager;
     delete runManager;
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    Logger::instance()->print(("Duration:"+std::to_string(duration.count())).c_str());
+
   return 0;
 }
 
