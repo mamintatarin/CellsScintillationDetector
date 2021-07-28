@@ -53,10 +53,10 @@ OpNoviceSteppingAction::~OpNoviceSteppingAction(){}
 void OpNoviceSteppingAction::UserSteppingAction(const G4Step* step)
 {
   auto track = step->GetTrack();
-    if (track->GetVolume()->GetName()=="World"  and track->GetVolume()->GetName()!="Scintillator" and track->GetDefinition()==G4OpticalPhoton::Definition()){
+  //  if (track->GetVolume()->GetName()=="World"  and track->GetVolume()->GetName()!="Scintillator" and track->GetDefinition()==G4OpticalPhoton::Definition()){
 
-        track->SetTrackStatus(fStopAndKill);
-    }
+    //    track->SetTrackStatus(fStopAndKill);
+    //}
 
 
     if (track->GetVolume()->GetName()=="Detector1" && track->GetDefinition()== G4OpticalPhoton::Definition()

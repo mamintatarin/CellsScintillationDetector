@@ -1,3 +1,49 @@
+Here is anything you need to know about project's functionality, 
+that differs from the original OpNovice project (it was based on it. Original README part is below).
+
+The detector is a GAGG scintillator with size of 14 x 14 x 7 mm. It is striked with a gamma particle.
+It's velocity is perpendicular to the "front surface" of scintillator - 14 x 14 mm closest surface.
+We call "bottom" a surface, opposing the front, and 'sides' - other four sufraces.
+
+It has four 'photomultipliers' - 
+four smaller volumes (approximately 6x6 mm) attached to the bottom side.
+ You can see them in visualisation.
+Photomultipliers are fillet with air, there is no reflection on their surface, only absorbtion.
+Absorbtion is 70% (to simulate typical efficiency). Every photon, that was not absorbed 
+at the surface of detector, is added to output binary file. Yoy can learn it's structure
+from any python script, reading the data.
+
+Also, you can see five big volumes, attached to the front and side surfaces.
+It was made for getting access to these surfaces in GEANT4. These five
+volumes are filled with air and they are not a part of detector, they are just
+a way to control reflection value of each surface differently. 
+
+There are also thin gaps on the bottom, that are not covered with photomultipliers,
+because bottom is 14 x 14 mm , and photomultipliers are ~6x6 mm, so they do not
+cover the bottom entirely. I call these gaps 'lines', and make this surface almost
+black, means small reflection value.
+
+The main script in energy_hist.py
+It takes PATH to the data, produced by GEANT4 simulation and produces diffetent
+pictures: energy histogram for photons, collected in photomultipliers, coordinate
+reconstruction, etc.
+
+You can run the project with a few custom arguements:
+
+./OpNovice -x *integer from -7 to 7* -y *integer from -7 to 7* 
+Sets up the coordinate of scintillator, which will be striked by the gamma particle.
+Both are zeros by default.
+
+./OpNovice -side *integer from 0 to 100* -roof *integer from 0 to 100*
+Sets up frontal (the closest to the gamma particle) surface reflection value in %
+and side surfaces (parallel to the gamma velocity direction) reflection value in %
+So "-side 95" means 5% absorbtion and 95% reflection from side surfaces.
+
+./OpNovice -m optPhoton.mac 
+Sets up the number of simulation runs you need, turns off the visualisation.
+
+
+
 -------------------------------------------------------------------
 
      =========================================================

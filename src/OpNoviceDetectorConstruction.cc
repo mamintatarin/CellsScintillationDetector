@@ -450,9 +450,9 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     G4OpticalSurface* OpSurface9 = new G4OpticalSurface("detector4");
     G4LogicalBorderSurface* Surface9= new
             G4LogicalBorderSurface("detector4",Scintillator,Detector4,OpSurface9);
- //   G4OpticalSurface* OpSurface10 = new G4OpticalSurface("lines");
-  //  G4LogicalBorderSurface* Surface10= new
-        //    G4LogicalBorderSurface("lines",Scintillator,physWorld,OpSurface10);
+    G4OpticalSurface* OpSurface10 = new G4OpticalSurface("lines");
+    G4LogicalBorderSurface* Surface10= new
+            G4LogicalBorderSurface("lines",Scintillator,physWorld,OpSurface10);
     G4OpticalSurfaceFinish finishDet=polished;
     G4OpticalSurfaceModel modelDet=unified;
     G4SurfaceType typeDet=dielectric_dielectric;
@@ -468,12 +468,13 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     OpSurface9->SetFinish(finishDet);
     OpSurface9->SetModel(modelDet);
     OpSurface9->SetType(typeDet);
-   // OpSurface10->SetFinish(finish);
-  //  OpSurface10->SetModel(model);
-   // OpSurface10->SetType(type);
 
-    G4double reflectivityDet[]={0.98,0.98};
-   // G4double reflectivityLines[]={0,0};
+    OpSurface10->SetFinish(finish);
+    OpSurface10->SetModel(model);
+    OpSurface10->SetType(type);
+
+    G4double reflectivityDet[]={0.3,0.3};
+    G4double reflectivityLines[]={0.1,0.1};
 
     G4MaterialPropertiesTable* OpSurfaceProperty6 = new G4MaterialPropertiesTable();
     OpSurfaceProperty6->AddProperty("REFLECTIVITY",ph_Energy,reflectivityDet,n);
@@ -484,13 +485,13 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     G4MaterialPropertiesTable* OpSurfaceProperty9 = new G4MaterialPropertiesTable();
     OpSurfaceProperty9->AddProperty("REFLECTIVITY",ph_Energy,reflectivityDet,n);
    G4MaterialPropertiesTable* OpSurfaceProperty10 = new G4MaterialPropertiesTable();
- //  OpSurfaceProperty10->AddProperty("REFLECTIVITY",ph_Energy,reflectivityLines,n);
+   OpSurfaceProperty10->AddProperty("REFLECTIVITY",ph_Energy,reflectivityLines,n);
 
     OpSurface6->SetMaterialPropertiesTable(OpSurfaceProperty6);
     OpSurface7->SetMaterialPropertiesTable(OpSurfaceProperty7);
     OpSurface8->SetMaterialPropertiesTable(OpSurfaceProperty8);
     OpSurface9->SetMaterialPropertiesTable(OpSurfaceProperty9);
-  // OpSurface10->SetMaterialPropertiesTable(OpSurfaceProperty10);
+   OpSurface10->SetMaterialPropertiesTable(OpSurfaceProperty10);
 
 
 
