@@ -4,11 +4,11 @@ from scipy.optimize import curve_fit
 toDouble=np.float64
 dtype=np.dtype([("event","i8"),("x",toDouble),("y",toDouble),("energy1",toDouble),("energy2",toDouble),("energy3",toDouble),("energy4",toDouble)])
 datalist=[]
-PATH='data/5mirrors LUT/'
+PATH='data/1mirror unified/'
 OUT_PATH=PATH+'out/'
 
 def gauss(x,a,x0,sigma):
-  return a*np.exp(-(x-x0)**2/(2*sigma**2))
+  return a*np.exp( -(x-x0)**2 / (2*(sigma**2)) )
 
 #построим гистограммы суммы энерговыделений в каждом файле
 #Внутри одного файла данные с одной координатой точки обстрела
@@ -24,15 +24,16 @@ for i in range(28):
   for j in range(4): #построим распределения энерговыделений в кажом из детекторов для каждой точки обстрела
     hist,edges=np.histogram(tempdata['energy'+str(j+1)],bins=80)
     hist=hist/(hist.sum()*np.diff(edges)[0])
-    a_predict=1.4
+    a_predict=10
     x0_predict=edges[np.argmax(hist)]
-    sigma_predict=0.7
-    left=int(np.argmax(hist)*0.8)
+    sigma_predict=0.03
+    left=int(np.argmax(hist)*0.6)
     right=int(np.argmax(hist)*1.4)
     if right>hist.size-1:
       right=hist.size-1
 
-    popt,pcov = curve_fit(gauss,edges[left:right],hist[left:right],p0=[a_predict,x0_predict,sigma_predict],bounds=(0,[np.inf,np.inf,np.inf]))
+    popt,pcov = curve_fit(gauss,edges[left:right],hist[left:right],p0=[a_predict,x0_predict,sigma_predict],bounds=(0,[10*a_predict,2*x0_predict,x0_predict]))
+
     plt.plot(edges[:-1],hist,color='b',label='simulation data')
     plt.plot(edges[left:right],gauss(edges[left:right],popt[0],popt[1],popt[2]),color='red',label='fit')
 
@@ -54,16 +55,16 @@ hist=hist/(hist.sum()*np.diff(edges)[0])
 
   
 
-a_predict=1.4
+a_predict=10
 x0_predict=edges[np.argmax(hist)]
-sigma_predict=0.5
+sigma_predict=0.03
 
-left=int(np.argmax(hist)*0.9)
-right=int(np.argmax(hist)*1.3)
+left=int(np.argmax(hist)*0.6)
+right=int(np.argmax(hist)*1.4)
 if right>hist.size-1:
       right=hist.size-1
 
-popt,pcov = curve_fit(gauss,edges[left:right],hist[left:right],p0=[a_predict,x0_predict,sigma_predict],bounds=(0,[np.inf,np.inf,np.inf]))
+popt,pcov = curve_fit(gauss,edges[left:right],hist[left:right],p0=[a_predict,x0_predict,sigma_predict],bounds=(0,[10*a_predict,2*x0_predict,x0_predict]))
 plt.plot(edges[:-1],hist,color='b',label='simulation data')
 plt.plot(edges[left:right],gauss(edges[left:right],popt[0],popt[1],popt[2]),color='red',label='fit')
 
