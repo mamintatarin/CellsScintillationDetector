@@ -35,13 +35,14 @@
 
 
 
-
+#include <Logger.hh>
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4SystemOfUnits.hh"
 #include <G4RandomDirection.hh>
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -54,24 +55,32 @@ OpNovicePrimaryGeneratorAction::OpNovicePrimaryGeneratorAction(CLHEP::Hep3Vector
   fParticleGun = new G4ParticleGun(n_particle);
     G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
 
+        G4double energy=140;
+        string particle_type="gamma";
+
+        G4ParticleDefinition* particle = particleTable->FindParticle(particle_type);
+         fParticleGun->SetParticleDefinition(particle);
+         fParticleGun->SetParticleTime(0.0*ns);
+         fParticleGun->SetParticlePosition(position);
+         fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,-1.));
+         fParticleGun->SetParticleEnergy(energy*keV);
+         /*
+
+                 G4double energy=2.4*0.001;
+                string particle_type="opticalphoton";
+                G4ParticleDefinition* particle = particleTable->FindParticle(particle_type);
+                fParticleGun->SetParticleDefinition(particle);
+                fParticleGun->SetParticleTime(0.0*ns);
+                fParticleGun->SetParticlePosition(G4ThreeVector(0.0,0.0,0.0));
+                fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.1,0.1,0.7));
+                fParticleGun->SetParticleEnergy(energy*eV);
+                fParticleGun->SetParticlePolarization(G4ThreeVector(1.0,1.0,0.0));
+        */
 
 
 
-    G4ParticleDefinition* particle = particleTable->FindParticle("gamma");
-     fParticleGun->SetParticleDefinition(particle);
-     fParticleGun->SetParticleTime(0.0*ns);
-     fParticleGun->SetParticlePosition(position);
-     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,-1.));
-     fParticleGun->SetParticleEnergy(140.0*keV);
-/*
-    G4ParticleDefinition* particle = particleTable->FindParticle("opticalphoton");
-    fParticleGun->SetParticleDefinition(particle);
-    fParticleGun->SetParticleTime(0.0*ns);
-    fParticleGun->SetParticlePosition(G4ThreeVector(0.0,0.0,0.0));
-    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.4,0,-0.5));
-    fParticleGun->SetParticleEnergy(2.5*eV);
-    fParticleGun->SetParticlePolarization(G4ThreeVector(1.0,1.0,0.0));
-    */
+     Logger::instance()->print(("Primary particle type: "+particle_type).c_str());
+     Logger::instance()->print(("Primary particle energy: "+std::to_string(energy)+" keV").c_str());
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
