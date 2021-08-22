@@ -4,7 +4,7 @@ from scipy.optimize import curve_fit
 toDouble=np.float64
 dtype=np.dtype([("event","i8"),("x",toDouble),("y",toDouble),("energy1",toDouble),("energy2",toDouble),("energy3",toDouble),("energy4",toDouble)])
 datalist=[]
-PATH='data/1mirror unified/'
+PATH='OpNoviceData/unified Te/'
 OUT_PATH=PATH+'out/'
 
 def gauss(x,a,x0,sigma):
@@ -78,7 +78,9 @@ plt.clf()
 
 
 print('Number of events =',data.shape[0])
-data=data[(data['energy1']+data['energy2']+data['energy3']+data['energy4']< popt[1]+popt[2])*(data['energy1']+data['energy2']+data['energy3']+data['energy4']> popt[1]-popt[2])]
+left_peak=popt[1]-popt[2]
+right_peak=popt[1]+popt[2]
+data=data[(data['energy1']+data['energy2']+data['energy3']+data['energy4']< right_peak)*(data['energy1']+data['energy2']+data['energy3']+data['energy4']> left_peak)]
 print('Number of events inside the peak =',data.shape[0])
 #Отсеяли события с аномальными энерговыделениями
 
@@ -134,44 +136,6 @@ np.save(PATH+'matrix',matrix)
 
 matrix=np.load(PATH+'matrix.npy')    
 
-#Введем огрубленные матрицы, в которых шаг не 1мм, а 2 и 3 мм
-matrix2 = np.zeros((7,7,4))
-counts2 = np.zeros((7,7))
-
-matrix3 = np.zeros((5,5,4))
-counts3 = np.zeros((5,5))
-#посчитаем их из точной матрицы
-#При этом в огрубленную матрицу войдут только ее узлы
-#Т.е. огрубленная матрица - это как если бы мы в эксперименте/симуляции обстреливали меньшее число точек, с бОльшим шагом
-for i in range(7):
-  for j in range(7):
-    x2 = (i-3)*2
-    y2 = (j-3)*2
-    for k in range(13):
-      for l in range(13):
-        x = k-6
-        y = l-6
-        if abs(x-x2)==0 and abs(y-y2)==0:
-          matrix2[i,j,:] = matrix2[i,j,:] + matrix[k,l,:]
-          counts2[i,j] = counts2[i,j] + 1
-for i in range(7):
-  for j in range(7):
-    matrix2[i,j,:]=matrix2[i,j,:]/counts2[i,j]
-
-for i in range(5):
-  for j in range(5):
-    x3 = (i-2)*3
-    y3 = (j-2)*3
-    for k in range(13):
-      for l in range(13):
-        x = k-6
-        y = l-6
-        if abs(x-x3)==0 and abs(y-y3)==0:
-          matrix3[i,j,:] = matrix3[i,j,:] + matrix[k,l,:]
-          counts3[i,j] = counts3[i,j] + 1
-for i in range(5):
-  for j in range(5):
-    matrix3[i,j,:]=matrix3[i,j,:]/counts3[i,j]
 
 for i in range(4):#Если все правильно, картинки будут гладкие
   #Честно говоря, я пытался продумать симметричные отражения, сделанные выше (преобразование result в matrix)
@@ -181,34 +145,33 @@ for i in range(4):#Если все правильно, картинки буду
   plt.matshow(matrix[:,:,i].T,origin='lower')
   plt.savefig(OUT_PATH+'visMat'+str(i))
   plt.clf()
-  plt.matshow(matrix2[:,:,i].T,origin='lower')
-  plt.savefig(OUT_PATH+'visMat_2_'+str(i))
-  plt.clf()
-  plt.matshow(matrix3[:,:,i].T,origin='lower')
-  plt.savefig(OUT_PATH+'visMat_3_'+str(i))
-  plt.clf()
 
 
-def predict(e1,e2,e3,e4,matrix):
+
+def predict(e1,e2,e3,e4,matrix,*args):
   #Принимает энерговыделения в детекторе и матрицу усредненных энерговыделений
   #Затем ищет наиболее похожий сигнал в матрице, и возвращает координату этого сигнала
+  #args просто для проверок
   centered=np.copy(matrix)
   centered[:,:,0]=centered[:,:,0]-e1
   centered[:,:,1]=centered[:,:,1]-e2
   centered[:,:,2]=centered[:,:,2]-e3
   centered[:,:,3]=centered[:,:,3]-e4
-  #Посчитали разность между каждым сигналов в матрице, и входным сигналом
-  """
+  #Посчитали разность между каждым сигналом в матрице и входным сигналом
+  
   mean_photons=matrix/(2.38*(10**(-3)))
-  trust = (1 - np.sqrt(1/mean_photons) )
-  trust[mean_photons<1]=0
-  trust[trust>1]=1
-  trust[trust<0]=0
-  """
-  minimized_expression = ( (centered**2) / matrix ).sum(axis=2)
-  #minimized_expression = (centered**2).sum(axis=2)
-  #minimized_expression=abs(centered/matrix).max(axis=2)
+  weight = mean_photons**(-1)
+  
+  minimized_expression = ( weight * (centered**2) ).sum(axis=2)
   ans=np.unravel_index( np.argmin( minimized_expression ) , [matrix.shape[0],matrix.shape[0]] )
+  
+  if len(args)==2 and args[0]==11 and args[1]==11 and int(ans[0])==int(ans[1])  and int(ans[0])==12:
+    print('matrix:',matrix[11,11,:],matrix[12,12,:])
+    print('signal:',e1,e2,e3,e4)
+    print('Weighted difference 11:',(weight * (centered**2))[11,11])
+    print('Weighted difference 12:',(weight * (centered**2))[12,12])
+    print('expression:',minimized_expression[11,11],minimized_expression[12,12],'\n')
+  
   return ans
 
         
@@ -216,27 +179,20 @@ def predict(e1,e2,e3,e4,matrix):
 
 #Теперь используем те же данные, на которых посчитали средний сигнал, как тестовые
 #Эта процедура легальна в нашем случае
-#Сроим распределения предполагаемых координат для фиксированной точки обстрела
+#Строим распределения предполагаемых координат для фиксированной точки обстрела
 for i in range(0,7):
   for j in range(i+1):    
     dataSlice=data[(data['x'].astype(int)==i)*(data['y'].astype(int)==j)]
     prediction=[]
-    prediction2=[]
-    prediction3=[]
     for line in dataSlice:
       e1=line['energy1']
       e2=line['energy2']
       e3=line['energy3']
       e4=line['energy4']
       coords=predict(e1,e2,e3,e4,matrix)
-      coords2=predict(e1,e2,e3,e4,matrix2)
-      coords3=predict(e1,e2,e3,e4,matrix3)
-      prediction.append([int(coords[0])-6,int(coords[1])-6])
-      prediction2.append([  (int(coords2[0])-3)*2    ,(int(coords2[1])-3)*2 ])
-      prediction3.append([ (int(coords3[0])-2)*3  ,  (int(coords3[1])-2)*3 ])
+      prediction.append([coords[0]-6,coords[1]-6])
     prediction=np.asarray(prediction)  
-    prediction2=np.asarray(prediction2)  
-    prediction3=np.asarray(prediction3)
+    
     plt.hist2d(prediction[:,0],prediction[:,1],bins=[np.arange(-6.5,7.5), np.arange(-6.5,7.5)])
     plt.scatter(i,j,color='red')
     plt.title('Probabiillity for each coorinate vs true coordinate')
@@ -245,21 +201,6 @@ for i in range(0,7):
     plt.colorbar()
     plt.savefig(OUT_PATH+'2dhist/2dhist'+str(i)+str(j))
     plt.clf()
-    plt.hist2d(prediction2[:,0],prediction2[:,1],bins=[np.arange(-6.5,7.5), np.arange(-6.5,7.5)])
-    plt.title('Probabiillity for each coorinate vs true coordinate')
-    plt.scatter(i,j,color='red')
-    plt.xlabel('x,mm')
-    plt.ylabel('y,mm')
-    plt.colorbar()
-    plt.savefig(OUT_PATH+'2dhist/2dhist_2_'+str(i)+str(j))
-    plt.clf()
-    plt.hist2d(prediction3[:,0],prediction3[:,1],bins=[np.arange(-6.5,7.5), np.arange(-6.5,7.5)])
-    plt.title('Probabiillity for each coorinate vs true coordinate')
-    plt.scatter(i,j,color='red')
-    plt.xlabel('x,mm')
-    plt.ylabel('y,mm')
-    plt.colorbar()
-    plt.savefig(OUT_PATH+'2dhist/2dhist_3_'+str(i)+str(j))
-    plt.clf()
-
+    
+   
 
