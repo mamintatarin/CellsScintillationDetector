@@ -23,6 +23,15 @@ void FillParticleDataOpt(SensitiveDetectorParticleDataOpt &data, G4double x,G4do
     data.energy4 = energy4;
 
 }
+void FillParticleDataGamma(SensitiveDetectorParticleDataGamma &data, G4double x,G4double y,G4double z,
+                         G4double energy) {
+
+    data.x=x;
+    data.y=y;
+    data.z=z;
+    data.event=G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+    data.energy = energy;
+}
 
 
 

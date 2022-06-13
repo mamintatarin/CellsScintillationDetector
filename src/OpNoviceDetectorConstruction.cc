@@ -99,8 +99,10 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     G4MaterialPropertiesTable* GAGGSC = new G4MaterialPropertiesTable();
 
 
-   G4double distrEn[]={2.6*eV,2.38*eV,2.07*eV,1.77*eV};
-   G4double distrF[]={0.1,1,0.33,0.08};
+    //G4double distrEn[]={2.6*eV,2.38*eV,2.07*eV,1.77*eV};
+    //G4double distrF[]={0.1,1,0.33,0.08};
+    G4double distrEn[]={2.38*eV,2.4*eV};
+    G4double distrF[]={0.5,0.5};
     G4double resolution_factor=3.59;
     GAGGSC->AddConstProperty("SCINTILLATIONYIELD",40./keV);
     GAGGSC->AddProperty("RINDEX", ph_Energy,LaBr3RefractiveIndex,n);
@@ -109,8 +111,10 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     GAGGSC->AddConstProperty("YIELDRATIO",0.95);
     GAGGSC->AddConstProperty("FASTTIMECONSTANT", 5*ns);
     GAGGSC->AddConstProperty("SLOWTIMECONSTANT", 60*ns);
-    GAGGSC->AddProperty("FASTCOMPONENT",distrEn,distrF,4)->SetSpline(TRUE);
-    GAGGSC->AddProperty("SLOWCOMPONENT",distrEn,distrF,4)->SetSpline(TRUE);
+    //GAGGSC->AddProperty("FASTCOMPONENT",distrEn,distrF,4)->SetSpline(TRUE);
+    //GAGGSC->AddProperty("SLOWCOMPONENT",distrEn,distrF,4)->SetSpline(TRUE);
+    GAGGSC->AddProperty("FASTCOMPONENT",distrEn,distrF,2);
+    GAGGSC->AddProperty("SLOWCOMPONENT",distrEn,distrF,2);
     
     Logger::instance()->print(("RESOLUTIONSCALE: "+std::to_string(resolution_factor)).c_str());
     GAGG->SetMaterialPropertiesTable(GAGGSC);
@@ -127,8 +131,8 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
   //G4Material* muscle_mat = nist->FindOrBuildMaterial("G4_MUSCLE_SKELETAL_ICRP");
   G4MaterialPropertiesTable* GalacticSC = new G4MaterialPropertiesTable();
   G4MaterialPropertiesTable* detTable = new G4MaterialPropertiesTable();
-  G4double refr[]={1,1};
-  G4double refrDet[]={2,2};
+  G4double refr[]={1.9,1.9};
+  G4double refrDet[]={1.9,1.9};
   GalacticSC->AddProperty("RINDEX",ph_Energy,refr,2);
   detTable->AddProperty("RINDEX",ph_Energy,refrDet,2);
   world_mat ->SetMaterialPropertiesTable(GalacticSC);
@@ -290,7 +294,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
 
     G4Box* solidDetector =
             new G4Box("Detector",                       //its name
-                      0.3*cm, 0.3*cm, scintillator_sizeZ);     //its size
+                      scintillator_sizeXY/2, scintillator_sizeXY/2, scintillator_sizeZ);     //its size
     G4LogicalVolume* logicDetector1 =
             new G4LogicalVolume(solidDetector,          //its solid
                                 det_mat,           //its material
@@ -373,9 +377,14 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
             G4LogicalBorderSurface("side5",Scintillator,Degree5,OpSurface5);
 
 
-    //G4OpticalSurfaceFinish finish=polishedfrontpainted;
-    //G4OpticalSurfaceModel model=unified;
-    //G4SurfaceType type=dielectric_dielectric;
+    G4OpticalSurfaceFinish finishSide=polishedfrontpainted;
+    G4OpticalSurfaceModel modelSide=unified;
+    G4SurfaceType typeSide=dielectric_dielectric;
+	
+	G4OpticalSurfaceFinish finishRoof=polishedfrontpainted;
+    G4OpticalSurfaceModel modelRoof=unified;
+    G4SurfaceType typeRoof=dielectric_dielectric;
+	/*
     G4OpticalSurfaceFinish finishRoof=etchedtyvekair;;
     G4OpticalSurfaceModel modelRoof=LUT;
     G4SurfaceType typeRoof=dielectric_LUT;
@@ -383,7 +392,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     G4OpticalSurfaceFinish finishSide=polishedtyvekair;
     G4OpticalSurfaceModel modelSide=LUT;
     G4SurfaceType typeSide=dielectric_LUT;
-
+    */
     Logger::instance()->print(("Surface type (roof): "+std::to_string(typeRoof)).c_str());
     Logger::instance()->print(("Surface model (roof): "+std::to_string(modelRoof)).c_str());
     Logger::instance()->print(("Surface finish (roof): "+std::to_string(finishRoof)).c_str());
@@ -414,7 +423,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     G4double reflectivitySideOp[]={this->side,this->side};
     G4double reflectivityRoofOp[]={this->roof,this->roof};
 
-
+   
     G4MaterialPropertiesTable* OpSurfaceProperty1 = new G4MaterialPropertiesTable();
     OpSurfaceProperty1->AddProperty("REFLECTIVITY",ph_Energy,reflectivitySideOp,n);
     G4MaterialPropertiesTable* OpSurfaceProperty2 = new G4MaterialPropertiesTable();
@@ -425,6 +434,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     OpSurfaceProperty4->AddProperty("REFLECTIVITY",ph_Energy,reflectivitySideOp,n);
     G4MaterialPropertiesTable* OpSurfaceProperty5 = new G4MaterialPropertiesTable();
     OpSurfaceProperty5->AddProperty("REFLECTIVITY",ph_Energy,reflectivityRoofOp,n);
+
 
     OpSurface1->SetMaterialPropertiesTable(OpSurfaceProperty1);
     OpSurface2->SetMaterialPropertiesTable(OpSurfaceProperty2);
@@ -445,9 +455,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     G4OpticalSurface* OpSurface9 = new G4OpticalSurface("detector4");
     G4LogicalBorderSurface* Surface9= new
             G4LogicalBorderSurface("detector4",Scintillator,Detector4,OpSurface9);
-    G4OpticalSurface* OpSurface10 = new G4OpticalSurface("lines");
-    G4LogicalBorderSurface* Surface10= new
-            G4LogicalBorderSurface("lines",Scintillator,physWorld,OpSurface10);
+  
     G4OpticalSurfaceFinish finishDet=polished;
     G4OpticalSurfaceModel modelDet=unified;
     G4SurfaceType typeDet=dielectric_dielectric;
@@ -463,17 +471,9 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     OpSurface9->SetFinish(finishDet);
     OpSurface9->SetModel(modelDet);
     OpSurface9->SetType(typeDet);
-
-    G4OpticalSurfaceFinish finishLines=polishedfrontpainted;
-    G4OpticalSurfaceModel modelLines=unified;
-    G4SurfaceType typeLines=dielectric_dielectric;
-
-    OpSurface10->SetFinish(finishLines);
-    OpSurface10->SetModel(modelLines);
-    OpSurface10->SetType(typeLines);
-
     G4double reflectivityDet[]={0.3,0.3};
-    G4double reflectivityLines[]={0.1,0.1};
+
+ 
 
     G4MaterialPropertiesTable* OpSurfaceProperty6 = new G4MaterialPropertiesTable();
     OpSurfaceProperty6->AddProperty("REFLECTIVITY",ph_Energy,reflectivityDet,n);
@@ -484,15 +484,13 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
     G4MaterialPropertiesTable* OpSurfaceProperty9 = new G4MaterialPropertiesTable();
     OpSurfaceProperty9->AddProperty("REFLECTIVITY",ph_Energy,reflectivityDet,n);
 
-    G4MaterialPropertiesTable* OpSurfaceProperty10 = new G4MaterialPropertiesTable();
-    OpSurfaceProperty10->AddProperty("REFLECTIVITY",ph_Energy,reflectivityLines,n);
 
     OpSurface6->SetMaterialPropertiesTable(OpSurfaceProperty6);
     OpSurface7->SetMaterialPropertiesTable(OpSurfaceProperty7);
     OpSurface8->SetMaterialPropertiesTable(OpSurfaceProperty8);
     OpSurface9->SetMaterialPropertiesTable(OpSurfaceProperty9);
 
-    OpSurface10->SetMaterialPropertiesTable(OpSurfaceProperty10);
+ 
 
 
 

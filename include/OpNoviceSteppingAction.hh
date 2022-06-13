@@ -9,7 +9,7 @@
 #include <G4UserSteppingAction.hh>
 #include <dataOpt.hh>
 #include <DataFile.hh>
-#include <random>
+//#include <random>
 
 
 
@@ -21,9 +21,11 @@ public:
     virtual ~OpNoviceSteppingAction();
     void UserSteppingAction(const G4Step *step) override;
     G4double results[4];
-    std:: minstd_rand simple_rand;
+    SensitiveDetectorParticleDataGamma dataGamma;
+    DataFile<SensitiveDetectorParticleDataGamma>* foutGammaParticles;
+    //std:: minstd_rand simple_rand;
 private:
-
+    
 
 
 };

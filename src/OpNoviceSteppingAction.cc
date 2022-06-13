@@ -42,7 +42,9 @@
 
 
 
-OpNoviceSteppingAction::OpNoviceSteppingAction(): G4UserSteppingAction(){}
+OpNoviceSteppingAction::OpNoviceSteppingAction(): G4UserSteppingAction(){
+    foutGammaParticles = DataFileManager::instance()->getDataFile<SensitiveDetectorParticleDataGamma>("GammaParticles");
+}
 
 
 
@@ -104,16 +106,16 @@ void OpNoviceSteppingAction::UserSteppingAction(const G4Step* step)
 
 
 
-/*
 
-    if (track->GetVolume()->GetName()=="Scintillator" && track->GetDefinition()==G4OpticalPhoton::Definition())
+
+    if (track->GetTrackID()==1)
     {
-
-
-        results[0] += track->GetKineticEnergy()/keV;
-        track->SetTrackStatus(fStopAndKill);
+        const G4StepPoint* prePoint = step->GetPreStepPoint();
+        FillParticleDataGamma(dataGamma, prePoint->GetPosition().getX()/mm,prePoint->GetPosition().getY()/mm,prePoint->GetPosition().getZ()/mm,
+                         prePoint->GetTotalEnergy()/keV);
+        foutGammaParticles->addData(dataGamma);
     }
- */
+ 
 
     }
 

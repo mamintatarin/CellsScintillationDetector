@@ -36,13 +36,21 @@ struct SensitiveDetectorParticleDataOpt{
     double energy4;
 
 };
+struct SensitiveDetectorParticleDataGamma{
+    int event;
+    double x;
+    double y;
+    double z;
+    double energy;
+};
 
 
 
 
 void FillParticleDataOpt(SensitiveDetectorParticleDataOpt &data, G4double x,G4double y,
                          G4double energy1,G4double energy2,G4double energy3,G4double energy4);
-
+void FillParticleDataGamma(SensitiveDetectorParticleDataGamma &data, G4double x,G4double y,G4double z,
+                         G4double energy);
 
 
 
