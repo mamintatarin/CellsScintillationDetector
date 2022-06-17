@@ -25,11 +25,6 @@ because bottom is 14 x 14 mm , and photomultipliers are ~6x6 mm, so they do not
 cover the bottom entirely. I call these gaps 'lines', and make this surface almost
 black, means small reflection value.
 
-The main script in energy_hist.py
-It takes PATH to the data, produced by GEANT4 simulation and produces diffetent
-pictures: energy histogram for photons, collected in photomultipliers, coordinate
-reconstruction, etc.
-
 You can run the project with a few custom arguements:
 
 ./OpNovice -x *integer from -7 to 7* -y *integer from -7 to 7* 
