@@ -9,10 +9,9 @@ We call "bottom" a surface, opposing the front, and 'sides' - other four sufrace
 
 It has four 'photomultipliers' - 
 four smaller volumes (approximately 6x6 mm) attached to the bottom side.
- You can see them in visualisation.
+You can see them in visualisation.
 Photomultipliers are filled with air, there is no reflection on their surface, only absorbtion.
-Absorbtion is 70% (to simulate typical efficiency). Every photon, that was not absorbed 
-at the surface of detector, is added to output binary file. Yoy can learn it's structure
+Every photon, that was not absorbed at the surface of detector, is added to output binary file. Yoy can learn it's structure
 from any python script, reading the data.
 
 Also, you can see five big volumes, attached to the front and side surfaces.
