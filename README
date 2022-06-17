@@ -10,7 +10,8 @@ We call "bottom" a surface, opposing the front, and 'sides' - other four sufrace
 It has four 'photomultipliers' - 
 four smaller volumes (approximately 6x6 mm) attached to the bottom side.
 You can see them in visualisation.
-Photomultipliers are filled with air, there is no reflection on their surface, only absorbtion. By default, their quantum efficiency is 0.3
+Photomultipliers are filled with air, there is no reflection on their surface, only absorbtion. 
+By default, their quantum efficiency is 0.3 - you can adjust it by changing reflection coefficient "reflectivityDet" in DetectorConstruction
 Every photon, that was not absorbed at the surface of detector, is added to output binary file. Yoy can learn it's structure
 from any python script, reading the data.
 
