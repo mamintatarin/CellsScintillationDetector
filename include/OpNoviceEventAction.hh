@@ -13,7 +13,7 @@ class G4Event;
 class OpNoviceEventAction: public G4UserEventAction
 {
   public:
-    OpNoviceEventAction();
+    OpNoviceEventAction(int x,int y);
     virtual ~OpNoviceEventAction();
     OpNoviceSteppingAction * tempStepping;
 

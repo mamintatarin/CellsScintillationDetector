@@ -36,14 +36,14 @@
 
 #include <stdio.h>
 #include <Logger.hh>
-#include"G4Gamma.hh"
+#include "G4Gamma.hh"
 
 
 
 
 
 OpNoviceSteppingAction::OpNoviceSteppingAction(): G4UserSteppingAction(){
-    foutGammaParticles = DataFileManager::instance()->getDataFile<SensitiveDetectorParticleDataGamma>("GammaParticles");
+
 }
 
 
@@ -105,16 +105,6 @@ void OpNoviceSteppingAction::UserSteppingAction(const G4Step* step)
 
 
 
-
-
-
-    if (track->GetTrackID()==1)
-    {
-        const G4StepPoint* prePoint = step->GetPreStepPoint();
-        FillParticleDataGamma(dataGamma, prePoint->GetPosition().getX()/mm,prePoint->GetPosition().getY()/mm,prePoint->GetPosition().getZ()/mm,
-                         prePoint->GetTotalEnergy()/keV);
-        foutGammaParticles->addData(dataGamma);
-    }
  
 
     }

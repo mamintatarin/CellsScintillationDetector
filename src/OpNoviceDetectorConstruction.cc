@@ -377,11 +377,11 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
             G4LogicalBorderSurface("side5",Scintillator,Degree5,OpSurface5);
 
 
-    G4OpticalSurfaceFinish finishSide=polishedfrontpainted;
+    G4OpticalSurfaceFinish finishSide=groundfrontpainted;
     G4OpticalSurfaceModel modelSide=unified;
     G4SurfaceType typeSide=dielectric_dielectric;
 	
-	G4OpticalSurfaceFinish finishRoof=polishedfrontpainted;
+	G4OpticalSurfaceFinish finishRoof=groundfrontpainted;
     G4OpticalSurfaceModel modelRoof=unified;
     G4SurfaceType typeRoof=dielectric_dielectric;
 	/*

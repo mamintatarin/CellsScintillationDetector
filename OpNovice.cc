@@ -101,8 +101,8 @@ int main(int argc,char** argv)
      if      ( G4String(argv[i]) == "-m" ) macro   = argv[i+1];
      else if ( G4String(argv[i]) == "-u" ) session = argv[i+1];
      else if ( G4String(argv[i]) == "-r" ) myseed  = atoi(argv[i+1]);
-     else if ( G4String(argv[i]) == "-x" ) x  = (float)atoi(argv[i+1]);
-     else if ( G4String(argv[i]) == "-y" ) y  = (float)atoi(argv[i+1]);
+     else if ( G4String(argv[i]) == "-x" ) x  = atoi(argv[i+1]);
+     else if ( G4String(argv[i]) == "-y" ) y  = atoi(argv[i+1]);
      else if ( G4String(argv[i]) == "-z" ) z  = (float)atoi(argv[i+1]);
      else if ( G4String(argv[i]) == "-side" ) side  = (float)atoi(argv[i+1])/100;
      else if ( G4String(argv[i]) == "-roof" ) roof  = (float)atoi(argv[i+1])/100;
@@ -153,7 +153,11 @@ int main(int argc,char** argv)
   runManager-> SetUserInitialization(physicsList);
 
   // User action initialization
-  runManager->SetUserInitialization(new OpNoviceActionInitialization(G4ThreeVector(x*mm,y*mm,z*mm)));
+  OpNoviceActionInitialization* act_init = new OpNoviceActionInitialization(G4ThreeVector((float)x*mm,(float)y*mm,(float)z*mm));
+  act_init -> x = x;
+  act_init -> y = y;
+ 
+  runManager->SetUserInitialization(act_init);
 
 
   // Initialize visualization

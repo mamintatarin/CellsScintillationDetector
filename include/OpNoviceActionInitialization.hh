@@ -20,6 +20,8 @@ class OpNoviceActionInitialization : public G4VUserActionInitialization
     virtual void Build() const;
 public:
     CLHEP::Hep3Vector position;
+    int x;
+    int y;
 
 };
 

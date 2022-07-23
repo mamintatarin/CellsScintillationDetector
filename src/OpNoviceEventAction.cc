@@ -2,10 +2,14 @@
 #include "stdio.h"
 #include "DataFileManager.hh"
 #include "dataOpt.hh"
-OpNoviceEventAction::OpNoviceEventAction()
+#include <G4SystemOfUnits.hh>
+
+OpNoviceEventAction::OpNoviceEventAction(int x, int y)
         : G4UserEventAction()
 {
-    foutGammaCamera = DataFileManager::instance()->getDataFile<SensitiveDetectorParticleDataOpt>("GammaCamera");
+    std::string filename_start = "GammaCamera";
+    std::string filename = filename_start + "_x_" + std::to_string((int)x) + "_y_" + std::to_string((int)y) + "_copynum_";
+    foutGammaCamera = DataFileManager::instance()->getDataFile<SensitiveDetectorParticleDataOpt>(filename);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
