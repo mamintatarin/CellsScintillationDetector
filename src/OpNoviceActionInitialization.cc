@@ -59,7 +59,7 @@ void OpNoviceActionInitialization::BuildForMaster() const
 
 void OpNoviceActionInitialization::Build() const
 {
-    OpNoviceEventAction* tempEvent = new OpNoviceEventAction(x,y);
+    OpNoviceEventAction* tempEvent = new OpNoviceEventAction();
     OpNoviceSteppingAction* tempStepping =  new OpNoviceSteppingAction();
 
   OpNoviceRunAction * tempRun = new OpNoviceRunAction(position);

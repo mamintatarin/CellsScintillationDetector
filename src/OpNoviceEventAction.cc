@@ -4,11 +4,10 @@
 #include "dataOpt.hh"
 #include <G4SystemOfUnits.hh>
 
-OpNoviceEventAction::OpNoviceEventAction(int x, int y)
+OpNoviceEventAction::OpNoviceEventAction()
         : G4UserEventAction()
 {
-    std::string filename_start = "GammaCamera";
-    std::string filename = filename_start + "_x_" + std::to_string((int)x) + "_y_" + std::to_string((int)y) + "_copynum_";
+    std::string filename = "GammaCamera";
     foutGammaCamera = DataFileManager::instance()->getDataFile<SensitiveDetectorParticleDataOpt>(filename);
 }
 
@@ -21,7 +20,7 @@ OpNoviceEventAction::~OpNoviceEventAction()
 void OpNoviceEventAction::EndOfEventAction(const G4Event* Event)
 {
 
-    G4int event = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+    //G4int event = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
 
     FillParticleDataOpt(data,position.getX(),position.getY(),
                         tempStepping->results[0],tempStepping->results[1]

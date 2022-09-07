@@ -89,21 +89,21 @@ int main(int argc,char** argv)
 
   G4String macro;
   G4String session;
-    G4double x=0;
-    G4double y=0;
-    G4double z=50+1+3.5/mm;
-    G4double side=0.95;
-    G4double roof=0.95;
+  G4double x=0;
+  G4double y=0;
+  G4double z=50+1+3.5/mm;
+  G4double side=0.95;
+  G4double roof=0.95;
 
 
-  G4long myseed = 345354;
+  //G4long myseed = 345354;
   for ( G4int i=1; i<argc; i=i+2 ) {
      if      ( G4String(argv[i]) == "-m" ) macro   = argv[i+1];
      else if ( G4String(argv[i]) == "-u" ) session = argv[i+1];
-     else if ( G4String(argv[i]) == "-r" ) myseed  = atoi(argv[i+1]);
-     else if ( G4String(argv[i]) == "-x" ) x  = atoi(argv[i+1]);
-     else if ( G4String(argv[i]) == "-y" ) y  = atoi(argv[i+1]);
-     else if ( G4String(argv[i]) == "-z" ) z  = (float)atoi(argv[i+1]);
+     //else if ( G4String(argv[i]) == "-r" ) myseed  = atoi(argv[i+1]);
+     else if ( G4String(argv[i]) == "-x" ) x  = atof(argv[i+1]);
+     else if ( G4String(argv[i]) == "-y" ) y  = atof(argv[i+1]);
+     else if ( G4String(argv[i]) == "-z" ) z  = atof(argv[i+1]);
      else if ( G4String(argv[i]) == "-side" ) side  = (float)atoi(argv[i+1])/100;
      else if ( G4String(argv[i]) == "-roof" ) roof  = (float)atoi(argv[i+1])/100;
 
@@ -132,7 +132,7 @@ int main(int argc,char** argv)
 
 
   // Seed the random number generator manually
-  G4Random::setTheSeed(myseed);
+  //G4Random::setTheSeed(myseed);
 
   // Set mandatory initialization classes
   //
@@ -153,9 +153,7 @@ int main(int argc,char** argv)
   runManager-> SetUserInitialization(physicsList);
 
   // User action initialization
-  OpNoviceActionInitialization* act_init = new OpNoviceActionInitialization(G4ThreeVector((float)x*mm,(float)y*mm,(float)z*mm));
-  act_init -> x = x;
-  act_init -> y = y;
+  OpNoviceActionInitialization* act_init = new OpNoviceActionInitialization(G4ThreeVector(x*mm,y*mm,z*mm));
  
   runManager->SetUserInitialization(act_init);
 

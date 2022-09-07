@@ -8,26 +8,21 @@ It's velocity is perpendicular to the "front surface" of scintillator - 14 x 14 
 We call "bottom" a surface, opposing the front, and 'sides' - other four sufraces.
 
 It has four 'photomultipliers' - 
-four smaller volumes (approximately 6x6 mm) attached to the bottom side.
+four smaller volumes (7x7 mm) attached to the bottom side.
 You can see them in visualisation.
-Photomultipliers are filled with air, there is no reflection on their surface, only absorbtion. 
+Photomultiplier volumes are filled with air, there is no reflection on their surface, only refraction into them or absorbtion on the surface.
+Absorbed photons are not registred, while those who passed into the volume are detected - this is the wave to simulate quantum efficiency of PMT's.  
 By default, their quantum efficiency is 0.3 - you can adjust it by changing reflection coefficient "reflectivityDet" in DetectorConstruction
-Every photon, that was not absorbed at the surface of detector, is added to output binary file. Yoy can learn it's structure
-from any python script, reading the data.
+Every photon, that was not absorbed at the surface of detector, is added to output binary file.
 
 Also, you can see five big volumes, attached to the front and side surfaces.
 It was made for getting access to these surfaces in GEANT4. These five
 volumes are filled with air and they are not a part of detector, they are just
 a way to control reflection value of each surface differently. 
 
-There are also thin gaps on the bottom, that are not covered with photomultipliers,
-because bottom is 14 x 14 mm , and photomultipliers are ~6x6 mm, so they do not
-cover the bottom entirely. I call these gaps 'lines', and make this surface almost
-black, means small reflection value.
-
 You can run the project with a few custom arguements:
 
-./OpNovice -x *integer from -7 to 7* -y *integer from -7 to 7* 
+./OpNovice -x *float from -7 to 7* -y *float from -7 to 7* 
 Sets up the coordinate of scintillator, which will be striked by the gamma particle.
 Both are zeros by default.
 

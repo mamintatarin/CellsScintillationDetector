@@ -21,8 +21,6 @@ public:
     virtual ~OpNoviceSteppingAction();
     void UserSteppingAction(const G4Step *step) override;
     G4double results[4];
-    SensitiveDetectorParticleDataGamma dataGamma;
-    //std:: minstd_rand simple_rand;
 private:
     
 
