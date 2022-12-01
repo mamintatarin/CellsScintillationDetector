@@ -65,7 +65,6 @@ void OpNoviceActionInitialization::Build() const
   OpNoviceRunAction * tempRun = new OpNoviceRunAction(position);
   Logger::instance()->print(std::to_string(position.getX()*mm)+ " " + std::to_string(position.getY()*mm)+" " + std::to_string(position.getZ()*mm) + " mm");
 
- // tempStepping->eventAct=tempEvent;
   tempEvent->position=position;
   tempEvent->tempStepping=tempStepping;
   SetUserAction(new OpNovicePrimaryGeneratorAction(position));

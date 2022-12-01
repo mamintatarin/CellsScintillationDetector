@@ -168,7 +168,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
   // Scintillator
   //
   G4double scintillator_sizeXY = 0.7*cm;
-  G4double scintillator_sizeZ  = 0.35*cm;
+  G4double scintillator_sizeZ  = 0.1*cm;
   
   
   G4Box* solidScintillator =
@@ -280,7 +280,7 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
 
     G4VPhysicalVolume* Degree5 =
             new G4PVPlacement(0,                     //no rotation
-                              G4ThreeVector(0*cm,0*cm,scintillator_sizeZ+0.5*mm),       //at (0,0,0)
+                              G4ThreeVector(0*cm,0*cm,scintillator_sizeZ+0.5*mm),   
                               logicDegree5,            //its logical volume
                               "Degree5",               //its name
                               logicWorld,                     //its mother  volume
